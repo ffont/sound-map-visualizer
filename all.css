@@ -1,0 +1,92 @@
+*{
+	margin:0;
+	padding:0;
+	font-family: "Roboto","Helvetica";
+	font-size: 14px;
+	font-weight: 300;
+}
+
+body{
+	background:#111;
+}
+
+canvas{
+	position:absolute;
+	transform:translateZ(0);
+}
+
+.box {
+	position: fixed;
+	color: #fff;
+	opacity: 0.9;
+}
+
+.box a {
+	color: #fff;
+}
+
+#query_box {
+	right: 20px;
+	top: 20px;
+}
+
+#instructions_box {
+	right: 20px;
+	bottom: 20px;
+	text-align: right;
+	pointer-events: none;
+}
+
+#sound_info_box {
+	left: 20px;
+	bottom: 20px;
+	text-align: left;
+}
+
+#logo_box {
+	top: 20px;
+	left: 20px;
+	width: 200px;
+	pointer-events: none;
+	font-weight: bold;
+	font-size: 30px;
+}
+
+#query_terms_input {
+	width: 240px;
+	padding: 7px;
+	border-radius: 5px;
+	border: 0px;
+	height: 30px;
+}
+
+#go_button {
+	padding: 0px;
+	border-radius: 5px;
+	border: 0px;
+	height: 30px;
+	width: 34px;
+}
+
+#map_descriptors_selector {
+	margin-top: 3px;
+	height: 30px;
+	width: 277px;
+	padding-left: 4px;
+	border-radius: 5px;
+	border: 0px;
+}
+
+#info_placeholder{
+	height: 30px;
+	line-height: 30px;
+}
+
+.query-form > select {
+	display: block;
+}
+
+.sound_image {
+	margin-bottom: 15px;
+	border-radius: 5px;
+}
