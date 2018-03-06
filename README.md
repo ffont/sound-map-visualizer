@@ -1,8 +1,8 @@
 # Sound Map Visualizer
 
-Simple version of Freesound Explorer that can be used to visualize artibtraty maps of sounds. Use the input box to set query terms to search in Freesound or the URL to a JSON file with arbitrary data to load.
+Simple version of Freesound Explorer that can be used to visualize artibtraty maps of sounds. 
 
-Double click `index.html` to open the interface.
+Checkout and double click `index.html` to open the interface. Use the input box to set query terms to search in Freesound or type the URL to a JSON file with arbitrary data to be loaded.
 
 
 #### How to provide data via JSON file
