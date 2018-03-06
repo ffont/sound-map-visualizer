@@ -6,8 +6,8 @@ var audio_manager = new AudioManager();
 // Sounds and content
 var default_query = "instrument note"
 var sounds = [];
-var extra_descriptors = "lowlevel.mfcc.mean";
-var map_features = ["lowlevel.mfcc.mean"];
+var extra_descriptors = undefined;
+var map_features = undefined;
 var map_type = "tsne"
 var n_pages = 3;
 var n_pages_received = 0;
@@ -20,7 +20,7 @@ var current_it_number = 0;
 var epsilon = 10;
 var perplexity = 10;
 var tsne = undefined;
-var max_xy_iterations = 300;
+var max_xy_iterations = 50;
 var map_xy_x_max = undefined;
 var map_xy_x_min = undefined;
 var map_xy_y_max = undefined;
@@ -43,6 +43,8 @@ var max_zoom = 15;
 /* Setup and app flow functions */
 
 function start(){
+
+    setMapDescriptor();
 
     // Sounds
     sounds = [];
@@ -79,23 +81,29 @@ function start(){
     opt.dim = 2; // dimensionality of the embedding (2 = default)
     tsne = new tsnejs.tSNE(opt); // create a tSNE instance
 
-    // Search sounds and start loading them
-    //var query = get_req_param("query");
-    var query = document.getElementById('query_terms_input').value;
-    if ((query == undefined) || (query=="")){
-        query = default_query;
-    }
-    for (var i=0; i<n_pages; i++){
-        var url = "https://freesound.org/apiv2/search/text/?query=" + query + "&" +
-        "group_by_pack=0&filter=duration:[0+TO+2]&fields=id,previews,name,analysis,url,username,images" +
-        "&descriptors=sfx.tristimulus.mean," + extra_descriptors + "&page_size=150" +
-        "&token=eecfe4981d7f41d2811b4b03a894643d5e33f812&page=" + (i + 1);
-        loadJSON(function(data) { load_data_from_fs_json(data); }, url);
-    }
 
-    // Ui
-    document.getElementById('query_terms_input').value = query;
-    document.getElementById('info_placeholder').innerHTML = "Searching...";
+    var query = document.getElementById('query_terms_input').value;
+    if (query.endsWith('.json')){
+        // If query ends with .json, then it refers to a JSON file we are loading
+        loadJSON(function(data) { load_data_from_fs_json(data); }, query);
+        n_pages = 1; // set n_pages to 1 as we only load one file    
+        document.getElementById('info_placeholder').innerHTML = "Loading from file...";
+    } else {
+        // Search sounds in Freesound and start loading them
+        if ((query == undefined) || (query=="")){
+            query = default_query;
+        }
+        for (var i=0; i<n_pages; i++){
+            var url = "https://freesound.org/apiv2/search/text/?query=" + query + "&" +
+            "group_by_pack=0&filter=duration:[0+TO+10]&fields=id,previews,name,analysis,url,username,images" +
+            "&descriptors=sfx.tristimulus.mean," + extra_descriptors + "&page_size=150" +
+            "&token=eecfe4981d7f41d2811b4b03a894643d5e33f812&page=" + (i + 1);
+            loadJSON(function(data) { load_data_from_fs_json(data); }, url);
+        }
+        // Ui
+        document.getElementById('query_terms_input').value = query;
+        document.getElementById('info_placeholder').innerHTML = "Searching...";
+    }  
 }
 
 window.requestAnimFrame = (function(){ // This is called when code reaches this point
@@ -111,7 +119,6 @@ window.requestAnimFrame = (function(){ // This is called when code reaches this 
     window.addEventListener("keydown", onKeyDown, false);
     window.addEventListener("keyup", onKeyUp, false);
     setMapDescriptor();
-    //start();
 })();
 
 (function loop(){  // This is called when code reaches this point
@@ -147,11 +154,11 @@ window.requestAnimFrame = (function(){ // This is called when code reaches this 
                 sound.x = sound.x * Math.pow(100, current_it_number/max_tsne_iterations - 1) + 0.5 * (1 - Math.pow(100, current_it_number/max_tsne_iterations - 1)); // Smooth position at the beginning
                 sound.y = sound.y * Math.pow(100, current_it_number/max_tsne_iterations - 1) + 0.5 * (1 - Math.pow(100, current_it_number/max_tsne_iterations - 1)); // Smooth position at the beginning
             }
+            current_it_number += 1;
         }
-        if (current_it_number == max_tsne_iterations) {
+        if (current_it_number >= max_tsne_iterations) {
             document.getElementById('info_placeholder').innerHTML = "Done, " + sounds.length + " sounds loaded!";
         }
-        current_it_number += 1;
     } else if (map_type == "xy") {
         // Get sound's xy position and scale it smoothly to create an animation effect
         if ((all_loaded == true) && (current_it_number <= max_xy_iterations)){
@@ -161,14 +168,12 @@ window.requestAnimFrame = (function(){ // This is called when code reaches this 
                 sound.x = sound.computed_x * Math.pow(100, current_it_number/max_xy_iterations - 1) + 0.5 * (1 - Math.pow(100, current_it_number/max_xy_iterations - 1)); // Smooth position at the beginning
                 sound.y = sound.computed_y * Math.pow(100, current_it_number/max_xy_iterations - 1) + 0.5 * (1 - Math.pow(100, current_it_number/max_xy_iterations - 1)); // Smooth position at the beginning
             }
+            current_it_number += 1;
         }
-        if (current_it_number == max_xy_iterations) {
+        if (current_it_number >= max_xy_iterations - 1) {
             document.getElementById('info_placeholder').innerHTML = "Done, " + sounds.length + " sounds loaded!";
         }
-        current_it_number += 1;
-
     }
-
     draw();
     requestAnimFrame(loop);
 })();
@@ -209,12 +214,12 @@ function load_data_from_fs_json(data){
         if (sound_json['analysis'] != undefined){
             var sound = new SoundFactory(
                 id=sound_json['id'],
-                preview_url=sound_json['previews']['preview-lq-mp3'],
+                preview_url=sound_json['audio'] || sound_json['previews']['preview-lq-mp3'],
                 analysis=sound_json['analysis'],
                 url=sound_json['url'],
                 name=sound_json['name'],
                 username=sound_json['username'],
-                image=sound_json['images']['spectral_m'],
+                image=sound_json['image'] || sound_json['images']['spectral_m'],
             );
             sounds.push(sound);
         }
@@ -314,7 +319,10 @@ function selectSoundFromId(sound_id){
 }
 
 function showSoundInfo(sound){
-    var html = '<img src="' + sound.image + '"/ class="sound_image"><br>';
+    var html = '';
+    if ((sound.image !== undefined) && (sound.image !== '')){
+        html += '<img src="' + sound.image + '"/ class="sound_image"><br>';
+    }
     html += sound.name + ' by <a href="' + sound.url + '" target="_blank">' + sound.username + '</a>';
     document.getElementById('sound_info_box').innerHTML = html;
 }

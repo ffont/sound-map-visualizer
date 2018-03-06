@@ -10,34 +10,12 @@
 
   <div id="query_box" class="box">
     <form id="query-form" class="query-form">
-      <input id="query_terms_input" type="text" placeholder="query terms, e.g.: instrument note">
+      <input id="query_terms_input" type="text" placeholder="Query terms or JSON filename">
       <input type="submit" id="go_button" value="Go!">
-      <select id="map_descriptors_selector" onchange="setMapDescriptor();">
-        <!-- 
-        You can add new options here so that features in axis can be changed.
-        To add new options add a new line with the form:
-          <option value="descriptors_to_be_used">Option display name</option>
-        The "descriptors_to_be_used" part should start with either:
-          - "xy&": to have a map in which one feature will be assigned in each dimension
-          - "tsne&": to have a map in which a self-organizing map will be computed from a given multi-dimensional feature
-        Then if using the "xy&" mode the two features to be used in each axis must be indicated separated by "&".
-        For example:
-          "xy&sfx.duration&lowlevel.pitch.mean" for duration in x axis (horizontal) and pitch mean in y axis (vertical)
-        In "tsne&" mode only 1 feature needs to be indicated and is expected to be a multi-dimensional feature so
-        that tsne can compute a dimensionality reduction
-        -->
+      <select id="map_descriptors_selector">
         <option value="xy&sfx.duration&lowlevel.pitch.mean">Duration + Pitch</option>
         <option value="xy&lowlevel.average_loudness&sfx.logattacktime.mean">Loudness + Log-attack time</option>
-        <option value="xy&lowlevel.spectral_centroid.mean&lowlevel.hfc.mean">Spectral centroid + HFC</option>
         <option value="tsne&lowlevel.mfcc.mean">MFCC</option>
-        <option value="tsne&lowlevel.barkbands.mean">Barkbands</option>
-        <option value="tsne&lowlevel.erb_bands.mean">ERB bands</option>
-        <option value="tsne&lowlevel.frequency_bands.mean">Frequency bands</option>
-        <option value="tsne&lowlevel.gfcc.mean">GFCC</option>
-        <option value="tsne&sfx.tristimulus.mean">Tristimulus</option>
-        <option value="tsne&tonal.hpcp.mean">HPCP</option>
-        <option value="tsne&lowlevel.spectral_contrast.mean">Spectral contrast</option>
-        <option value="tsne&lowlevel.scvalleys.mean">SC Valleys</option>
       </select>
     </form>
     <div id="info_placeholder"></div>
