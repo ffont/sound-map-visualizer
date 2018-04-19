@@ -23,14 +23,17 @@ function setVolume(value){
   context.gainNode.gain.value = value;
 }
 
+BUFFER_NODES = []
+TIMERS = []
 
-function playSound(buffer, time, callback) {
+function playSound(buffer, time, callback, id) {
   var source = context.createBufferSource();
+  BUFFER_NODES.push({'sound_id': id, 'node': source});
   source.buffer = buffer;
   source.connect(context.gainNode);
   source[source.start ? 'start' : 'noteOn'](time);
   if (callback){
-    setTimeout(callback, source.buffer.duration * 1000);
+    TIMERS.push(setTimeout(callback, source.buffer.duration * 1000));
   }
 }
 

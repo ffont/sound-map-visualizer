@@ -9,7 +9,7 @@ AudioManager.prototype.playSoundByName = function(name, time) {
     if (name in this){
         playSound(this[name], time, function(){
             selectSoundFromId(name);
-        });  
+        }, name);  
     } else {
         console.log("ERROR: sound " + name + " not available!")
     }
@@ -22,6 +22,18 @@ AudioManager.prototype.loadSound = function(name, url) {
     loadSounds(this, soundMap, function(){
         audio_manager.playSoundByName(name);
     });
+}
+
+AudioManager.prototype.stopAllBufferNodes = function() {
+    for(var key in TIMERS){
+        clearTimeout(TIMERS[key]);
+    }
+    TIMERS = [];
+    for(var key in BUFFER_NODES){
+        BUFFER_NODES[key].node.stop();  
+        selectSoundFromId(BUFFER_NODES[key].sound_id);
+    }
+    BUFFER_NODES = [];
 }
 
 /* Distance measures */

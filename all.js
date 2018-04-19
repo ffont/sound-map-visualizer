@@ -2,6 +2,7 @@
 
 // Audio stuff
 var audio_manager = new AudioManager();
+var MONO_MODE = true;
 
 // Sounds and content
 var default_query = "instrument note"
@@ -300,6 +301,9 @@ function selectSound(selected_sound){
     if (!selected_sound.selected){
         selected_sound.selected = true;
         selected_sound.mod_amp = 5.0;
+        if (MONO_MODE) {
+            audio_manager.stopAllBufferNodes();
+        }
         audio_manager.loadSound(selected_sound.id, selected_sound.preview_url);
         showSoundInfo(selected_sound);
         last_selected_sound_id = selected_sound['id']
