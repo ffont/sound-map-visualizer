@@ -8,7 +8,7 @@ AudioManager.prototype.playSoundByName = function(name, time) {
     }
     if (name in this){
         playSound(this[name], time, function(){
-            selectSoundFromId(name);
+            finishPlayingSound(name);
         }, name);  
     } else {
         console.log("ERROR: sound " + name + " not available!")
@@ -30,8 +30,11 @@ AudioManager.prototype.stopAllBufferNodes = function() {
     }
     TIMERS = [];
     for(var key in BUFFER_NODES){
-        BUFFER_NODES[key].node.stop();  
-        selectSoundFromId(BUFFER_NODES[key].sound_id);
+        var node = BUFFER_NODES[key];
+        if (node !== undefined){
+            BUFFER_NODES[key].node.stop();      
+            finishPlayingSound(BUFFER_NODES[key].sound_id);
+        }
     }
     BUFFER_NODES = [];
 }

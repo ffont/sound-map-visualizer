@@ -298,6 +298,7 @@ function checkSelectSound(x, y){
 }
 
 function selectSound(selected_sound){
+
     if (!selected_sound.selected){
         selected_sound.selected = true;
         selected_sound.mod_amp = 5.0;
@@ -313,11 +314,22 @@ function selectSound(selected_sound){
     }
 }
 
+function finishPlayingSound(sound_id){
+    var sound = getSoundFromId(sound_id);
+    sound.selected = false;
+    sound.mod_amp = default_point_modulation;
+}
+
 function selectSoundFromId(sound_id){
+    var sound = getSoundFromId(sound_id);
+    selectSound(sound);
+}
+
+function getSoundFromId(sound_id){
     for (i in sounds){
         var sound = sounds[i];
         if (sound.id == parseInt(sound_id)){
-            selectSound(sound);
+            return sound;
         }
     }
 }
