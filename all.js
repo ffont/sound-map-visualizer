@@ -120,6 +120,15 @@ window.requestAnimFrame = (function(){ // This is called when code reaches this 
     window.addEventListener("keydown", onKeyDown, false);
     window.addEventListener("keyup", onKeyUp, false);
     setMapDescriptor();
+
+    // If query_terms_input has a default set in the dataset, run it
+    var query_terms_input = document.getElementById('query_terms_input');
+    var default_query = query_terms_input.dataset.default;
+    if (default_query !== undefined){
+        query_terms_input.value = default_query;
+        start();
+    }
+
 })();
 
 (function loop(){  // This is called when code reaches this point
@@ -196,10 +205,17 @@ function SoundFactory(id, preview_url, analysis, url, name, username, image){
     this.analysis = analysis;
 
     // Set color of the points
+    try {
+        r = analysis['sfx']['tristimulus']['mean'][0]
+        g = analysis['sfx']['tristimulus']['mean'][1]
+        b = analysis['sfx']['tristimulus']['mean'][1]
+    } catch (error) {
+        r = g = b = 1.0;
+    }
     var color = rgbToHex(
-        Math.floor(255 * analysis['sfx']['tristimulus']['mean'][0]),
-        Math.floor(255 * analysis['sfx']['tristimulus']['mean'][1]),
-        Math.floor(255 * analysis['sfx']['tristimulus']['mean'][2])
+        Math.floor(255 * r),
+        Math.floor(255 * g),
+        Math.floor(255 * b)
     )
     this.rgba = color;
 
@@ -213,6 +229,13 @@ function load_data_from_fs_json(data){
     for (i in data['results']){
         var sound_json = data['results'][i];
         if (sound_json['analysis'] != undefined){
+            var image_url = undefined;
+            if (sound_json['image'] !== undefined){
+                image_url = sound_json['image']
+            }
+            if ((sound_json['images']!== undefined) && (sound_json['images']['spectral_m'] !== undefined)){
+                image_url = sound_json['images']['spectral_m'];
+            }
             var sound = new SoundFactory(
                 id=sound_json['id'],
                 preview_url=sound_json['audio'] || sound_json['previews']['preview-lq-mp3'],
@@ -220,7 +243,7 @@ function load_data_from_fs_json(data){
                 url=sound_json['url'],
                 name=sound_json['name'],
                 username=sound_json['username'],
-                image=sound_json['image'] || sound_json['images']['spectral_m'],
+                image=image_url,
             );
             sounds.push(sound);
         }

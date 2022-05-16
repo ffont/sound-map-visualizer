@@ -88,6 +88,7 @@ the full name to be used for MFCCs should be `lowlevel.mfcc.mean`, while the nam
 
 Loading local JSON files might be problematic in some browsers due to cross origin requests restrictions. After some quick tests we've observed that in Firefox the JSON load feature works fine, but that for it to work in Chrome and Safari you'll need to run a trick and create a simple local HTTP server that serves the `index.html` file instead of opening it directly. To do that open a temrinal to the repsitory folder and simply run:
 ```
-python -m SimpleHTTPServer 8000
+python -m SimpleHTTPServer 8000  # python 2
+python3 -m http.server  # python 3
 ```
 Then point your browser at `http://localhost:8000` and all will work just fine.
