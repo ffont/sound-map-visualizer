@@ -40,6 +40,7 @@ var zoom_factor = undefined;  // Set in start()
 var rotation_degrees = undefined;  // Set in start()
 var min_zoom = 0.2;
 var max_zoom = 15;
+var global_composite_lighter = false;
 
 /* Setup and app flow functions */
 
@@ -385,7 +386,9 @@ function setMapDescriptor(){
 
 function draw(){
     ctx.clearRect(0, 0, w, h);
-    ctx.globalCompositeOperation = 'lighter';
+    if (global_composite_lighter){
+        ctx.globalCompositeOperation = 'lighter';
+    }
     for(i in sounds){
         var sound = sounds[i];
         var disp_x, disp_y;
