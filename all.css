@@ -34,7 +34,6 @@ canvas{
 	right: 20px;
 	bottom: 20px;
 	text-align: right;
-	pointer-events: none;
 }
 
 #sound_info_box {

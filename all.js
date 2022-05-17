@@ -2,7 +2,7 @@
 
 // Audio stuff
 var audio_manager = new AudioManager();
-var MONO_MODE = true;
+var MONO_MODE = false;
 
 // Sounds and content
 var default_query = "instrument note"
@@ -425,3 +425,8 @@ function draw(){
   }
   document.getElementById('query-form').onsubmit = formSubmitHandler;
 })()
+
+// toggle mono mode
+function toggleMonoMode(checkboxElement){
+    MONO_MODE = checkboxElement.checked;
+}
