@@ -1,5 +1,6 @@
 // Start off by initializing a new context.
 context = new (window.AudioContext || window.webkitAudioContext)();
+unlockAudioContext();
 
 if (!context.createGain)
   context.createGain = context.createGainNode;
@@ -110,4 +111,15 @@ aux_player = new Audio()
 function play_sound_from_url(url){
     aux_player.src = url;
     aux_player.autoplay = true;
+}
+
+
+/* enable audio context in safari */
+function unlockAudioContext(audioCtx) {
+  if (context.state !== 'suspended') return;
+  const b = document.body;
+  const events = ['touchstart','touchend', 'mousedown','keydown'];
+  events.forEach(e => b.addEventListener(e, unlock, false));
+  function unlock() { context.resume().then(clean); }
+  function clean() { events.forEach(e => b.removeEventListener(e, unlock)); }
 }
