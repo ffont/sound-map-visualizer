@@ -209,7 +209,7 @@ function SoundFactory(id, preview_url, analysis, url, name, username, image){
     try {
         r = analysis['sfx']['tristimulus']['mean'][0]
         g = analysis['sfx']['tristimulus']['mean'][1]
-        b = analysis['sfx']['tristimulus']['mean'][1]
+        b = analysis['sfx']['tristimulus']['mean'][2]
     } catch (error) {
         r = g = b = 1.0;
     }
